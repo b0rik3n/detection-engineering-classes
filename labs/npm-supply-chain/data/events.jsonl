@@ -15,3 +15,6 @@
 {"@timestamp":"2026-03-31T02:14:30Z","event.dataset":"edr","host.name":"dev-mac-03","user.name":"carol","event.category":"process","process.name":"zsh","process.command_line":"/bin/zsh -c /Library/Caches/com.apple.act.mond"}
 {"@timestamp":"2026-03-31T00:24:40Z","event.dataset":"proxy","host.name":"dev-win-01","user.name":"alice","url.full":"http://sfrclak.com:8000/6202033","destination.ip":"142.11.206.73","event.category":"network"}
 {"@timestamp":"2026-03-31T01:04:10Z","event.dataset":"pkg","host.name":"build-agent-07","user.name":"ci-bot","package.name":"plain-crypto-js","package.version":"4.2.1","event.category":"package","event.action":"install"}
+{"@timestamp":"2026-05-01T14:00:00Z","host.name":"baseline-host-01","user.name":"ops.user","source.ip":"10.10.10.10","destination.ip":"10.10.10.20","domain":"internal.local","event.action":"normal_operation"}
+{"@timestamp":"2026-05-01T14:03:00Z","host.name":"baseline-host-01","user.name":"ops.user","source.ip":"10.10.10.10","destination.ip":"10.10.10.21","event.action":"normal_read"}
+{"@timestamp":"2026-05-01T14:07:00Z","host.name":"susp-host-09","user.name":"unknown.user","source.ip":"10.10.10.50","destination.ip":"185.244.25.12","domain":"suspicious.example.com","event.action":"suspicious_action"}

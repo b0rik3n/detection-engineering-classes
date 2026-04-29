@@ -1,80 +1,115 @@
 # Extended Student Handout (Very Beginner-Friendly)
 ## OT/ICS Protocol Misuse (Advanced)
 
-## Read this first
-This is a click-by-click guide for students who are not very technical yet.
-Follow each step in order and record your outputs.
+## Who this is for
+This guide is for students who are new to SOC tooling. It is intentionally step-by-step.
 
-## Step 0: Open tools
+## Scenario in plain English
+Industrial protocol write operations deviate from baseline and align with suspicious network signals.
+
+## Objectives
+By the end, you will produce in both Splunk and Elastic:
+1. IOC detection
+2. Behavioral detection
+3. Correlation detection
+4. Investigation evidence and ATT&CK mapping
+
+## Quick glossary
+- IOC: known suspicious indicator (IP/domain/hash/user-agent/etc.)
+- Behavioral detection: suspicious actions regardless of exact IOC
+- Correlation: multiple weak signals combined into strong signal
+- False positive: suspicious-looking but benign result
+- Tuning: improving logic to reduce false positives
+
+## Click-by-click setup
 ### Splunk
-1. Open Splunk in browser.
+1. Open Splunk URL.
 2. Click **Search & Reporting**.
-3. Set time to **All time**.
+3. Set time picker to **All time**.
 4. Run: 
    
    index=ot_adv_demo | head 20
 
 ### Kibana
-1. Open Kibana in browser.
+1. Open Kibana URL.
 2. Go to **Analytics > Discover**.
-3. Select index pattern: *
-4. Set time to include all events.
-5. Run query: *
+3. Select index pattern: ot_adv_demo_*
+4. Set time range to cover all lab data.
+5. Run query "*" and click **Refresh**.
 
-If either tool shows no events, check index name and time range first.
+If zero events appear in either tool, stop and check index name + time range.
 
 ## Step 1: Field mapping
-Map Splunk fields to ECS fields:
+Create a mapping table in your notes:
 - host -> host.name
 - user -> user.name
 - src_ip -> source.ip
 - dest_ip -> destination.ip
+- domain -> domain
 - action -> event.action
 - process_name -> process.name
 - process_commandline -> process.command_line
 
-## Step 2: IOC detection
-1. Open 
-   splunk/starter-queries.spl
-2. Copy IOC query and run in Splunk.
-3. Open 
-   elastic/esql/starter-queries.esql
-4. Copy IOC query and run in Kibana ES|QL.
-5. Record impacted hosts and first/last seen times.
+## Step 2: IOC detections
+Use starter queries.
+- Suspicious IP: 
+  - 
+    185.244.25.12
+- Suspicious domain:
+  - 
+    suspicious.example.com
 
-## Step 3: Behavioral detection
-1. Run behavioral query in Splunk.
-2. Run behavioral query in ES|QL.
-3. Tune filters to reduce noise.
-4. Record before/after counts.
+Record:
+- impacted hosts
+- first seen / last seen
+- count of IOC hits by type
 
-## Step 4: Correlation detection
-1. Run correlation query in Splunk (30-minute window).
-2. Run correlation query in ES|QL (30-minute window).
-3. Record hosts that satisfy all required conditions.
+## Step 3: Behavioral detections
+Run behavioral queries and tune.
+Tuning ideas:
+- require stronger commandline patterns
+- require suspicious parent process
+- exclude known-benign update paths
 
-## Step 5: Kibana rule creation (click-by-click)
-1. Go to **Security > Rules**.
-2. Click **Create rule**.
-3. Create IOC rule.
-4. Create behavioral rule.
-5. Create correlation rule.
-6. Set severity and short triage notes.
+Record before/after count and what you changed.
+
+## Step 4: Correlation detections
+Run 30-minute window correlation queries in both tools.
+Record hosts where IOC + behavior + network signals overlap.
+Then test 15-minute and 60-minute windows and compare.
+
+## Step 5: Kibana operational tasks
+1. In Discover, pivot from one suspicious event to related events on same host.
+2. Create 3 rules in **Security > Rules**:
+   - IOC rule
+   - Behavioral rule
+   - Correlation rule
+3. Save screenshots of:
+   - timeline view
+   - destination IP/domain view
+   - suspicious process/action table
 
 ## Step 6: ATT&CK mapping
-Create at least 4 ATT&CK mappings with one-line rationale each.
+Create at least 4 ATT&CK mappings with rationale.
+Use evidence fields in your explanation.
 
-## Step 7: Final write-up
-Write one page comparing SPL vs ES|QL:
-- precision
-- performance
-- maintainability
-- recommendation
+## Step 7: Final write-up (1 page)
+Answer:
+1. Which platform was easier for IOC work?
+2. Which platform was easier for behavior/correlation?
+3. What tuning reduced noise most?
+4. Which platform would you use for production and why?
+
+## Troubleshooting
+- No results: check time range/index pattern.
+- Too many results: tighten behavior filters.
+- Splunk vs ES|QL mismatch: verify field mapping and null handling.
+- Correlation empty: validate IOC/behavior separately first.
 
 ## Submission checklist
-- [ ] IOC queries complete
-- [ ] Behavioral queries complete
-- [ ] Correlation queries complete
-- [ ] Kibana evidence attached
-- [ ] ATT&CK mapping attached
-- [ ] Final comparison attached
+- [ ] IOC detections in SPL and ES|QL
+- [ ] Behavioral detections in SPL and ES|QL
+- [ ] Correlation detections in SPL and ES|QL
+- [ ] Kibana evidence
+- [ ] ATT&CK mapping
+- [ ] Final comparison

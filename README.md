@@ -15,6 +15,9 @@ Central repo for detection engineering classes.
 - `labs/vpn-edge-device-exploitation`
 - `labs/ot-ics-protocol-misuse-advanced`
 
+## Admin docs
+- `ADMIN_BACKEND_SETUP_GUIDE.md`
+
 ## Suggested naming convention
 - `de-lab-<topic>`
 

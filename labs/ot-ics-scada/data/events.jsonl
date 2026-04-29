@@ -6,3 +6,6 @@
 {"@timestamp":"2026-05-01T12:06:00Z","site.name":"plant-a","zone":"control","event.dataset":"ics","network.protocol":"modbus","source.ip":"10.20.5.10","destination.ip":"10.20.30.18","ics.function_code":6,"ics.action":"write_register","host.name":"eng-ws-01","user.name":"operator1"}
 {"@timestamp":"2026-05-01T12:07:40Z","site.name":"plant-a","zone":"dmz","event.dataset":"netflow","source.ip":"10.20.5.10","destination.ip":"185.244.25.12","domain":"update-plc-service.net","event.category":"network"}
 {"@timestamp":"2026-05-01T12:25:10Z","site.name":"plant-a","zone":"control","event.dataset":"ics","network.protocol":"dnp3","source.ip":"10.20.5.10","destination.ip":"10.20.33.11","ics.action":"logic_write","host.name":"eng-ws-01","user.name":"operator1"}
+{"@timestamp":"2026-05-01T14:00:00Z","host.name":"baseline-host-01","user.name":"ops.user","source.ip":"10.10.10.10","destination.ip":"10.10.10.20","domain":"internal.local","event.action":"normal_operation"}
+{"@timestamp":"2026-05-01T14:03:00Z","host.name":"baseline-host-01","user.name":"ops.user","source.ip":"10.10.10.10","destination.ip":"10.10.10.21","event.action":"normal_read"}
+{"@timestamp":"2026-05-01T14:07:00Z","host.name":"susp-host-09","user.name":"unknown.user","source.ip":"10.10.10.50","destination.ip":"185.244.25.12","domain":"suspicious.example.com","event.action":"suspicious_action"}
