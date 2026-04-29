@@ -1,1 +1,4 @@
 {"@timestamp":"2026-05-01T10:00:00Z","host.name":"host-01","user.name":"analyst1","source.ip":"10.0.0.10","destination.ip":"185.244.25.12","domain":"suspicious.example.com","event.action":"suspicious_action","process.name":"script.exe","process.command_line":"script.exe --encoded"}
+{"@timestamp":"2026-05-01T12:10:00Z","host.name":"eng-ws-02","user.name":"operator2","source.ip":"10.21.5.11","destination.ip":"10.21.30.15","network.protocol":"modbus","ics.function_code":16,"ics.action":"write_register"}
+{"@timestamp":"2026-05-01T12:13:00Z","host.name":"eng-ws-02","user.name":"operator2","source.ip":"10.21.5.11","destination.ip":"10.21.31.20","network.protocol":"dnp3","ics.action":"logic_write"}
+{"@timestamp":"2026-05-01T12:16:00Z","host.name":"eng-ws-02","source.ip":"10.21.5.11","destination.ip":"185.244.25.12","domain":"suspicious.example.com","event.action":"outbound_connection"}
