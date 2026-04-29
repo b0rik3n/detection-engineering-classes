@@ -1,0 +1,1 @@
+{"@timestamp":"2026-05-01T10:00:00Z","host.name":"host-01","user.name":"analyst1","source.ip":"10.0.0.10","destination.ip":"185.244.25.12","domain":"suspicious.example.com","event.action":"suspicious_action","process.name":"script.exe","process.command_line":"script.exe --encoded"}

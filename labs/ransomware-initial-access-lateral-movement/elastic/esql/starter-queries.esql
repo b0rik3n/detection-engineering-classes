@@ -1,0 +1,20 @@
+// IOC detections
+FROM ransomware_demo_*
+| WHERE domain == "suspicious.example.com" OR destination.ip == "185.244.25.12"
+| KEEP @timestamp, host.name, user.name, source.ip, destination.ip, domain, process.name, process.command_line, event.action
+| SORT @timestamp ASC
+
+// Behavioral detections
+FROM ransomware_demo_*
+| WHERE event.action == "suspicious_action" OR process.command_line LIKE "*encoded*"
+| STATS first_seen=min(@timestamp), last_seen=max(@timestamp), actions=values(event.action) BY host.name, user.name
+| SORT first_seen ASC
+
+// Correlation detections (30m)
+FROM ransomware_demo_*
+| EVAL ioc_hit = CASE(domain == "suspicious.example.com" OR destination.ip == "185.244.25.12",1,0)
+| EVAL beh_hit = CASE(event.action == "suspicious_action",1,0)
+| EVAL bucket = DATE_TRUNC(30 minutes, @timestamp)
+| STATS ioc=max(ioc_hit), beh=max(beh_hit) BY host.name, bucket
+| WHERE ioc == 1 AND beh == 1
+| SORT bucket ASC
