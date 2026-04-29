@@ -1,10 +1,11 @@
 # detection-engineering-classes
 
-Collection index for detection engineering labs.
+Central repo for detection engineering classes.
 
-## Labs
+## Labs (in this repo)
 
-- [de-lab-npm-supply-chain](https://github.com/b0rik3n/de-lab-npm-supply-chain)
+- `labs/npm-supply-chain`
+- `labs/ot-ics-scada`
 
 ## Suggested naming convention
 - `de-lab-<topic>`
