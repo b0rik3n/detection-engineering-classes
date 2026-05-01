@@ -189,6 +189,15 @@ def sqlite_like_pattern(value: str, wrap: bool = False) -> str:
     return f"%{escaped}%" if wrap and "%" not in escaped and "_" not in escaped else escaped
 
 
+def raw_json_value_like_pattern(value: str) -> str:
+    pattern = sqlite_like_pattern(value, wrap=True)
+    if not pattern.startswith("%"):
+        pattern = f"%{pattern}"
+    if not pattern.endswith("%"):
+        pattern = f"{pattern}%"
+    return pattern
+
+
 def normalize_event(event: dict[str, Any]) -> dict[str, Any]:
     now = datetime.now(timezone.utc).isoformat()
     ts = first_value(event, "@timestamp", "timestamp", "time", "event_time", default=now)
@@ -418,6 +427,10 @@ def search_logs(req: SearchRequest) -> dict[str, Any]:
             else:
                 where.append(f"{column} = ?")
                 params.append(value)
+        else:
+            where.append("(raw_json LIKE ? ESCAPE '\\' AND raw_json LIKE ? ESCAPE '\\')")
+            params.append(f'%"{key}"%')
+            params.append(raw_json_value_like_pattern(value))
 
     if req.start_time:
         where.append("timestamp >= ?")

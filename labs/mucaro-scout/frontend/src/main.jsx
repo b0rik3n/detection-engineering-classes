@@ -5,7 +5,7 @@ import './styles.css';
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 const DIALECT_HINTS = {
-  kql: 'domain: *coin* or process.name: *.exe',
+  kql: 'domain=*coin* process.name=*.exe "Lotus Blossom"',
   esql: 'FROM logs | WHERE severity == "high" | LIMIT 100',
 };
 
@@ -28,11 +28,11 @@ function parseQueryByDialect(rawQuery, dialect) {
   if (!text) return { query: '', filters };
 
   if (dialect === 'kql') {
-    text = text.replace(/\b([a-zA-Z_][\w.]*)\s*:\s*("[^"]+"|'[^']+'|[^\s)]+)/g, (_, key, value) => {
+    text = text.replace(/\b([a-zA-Z_][\w.]*)\s*(?:=|:)\s*("[^"]+"|'[^']+'|[^\s)]+)/g, (_, key, value) => {
       filters[key] = cleanValue(value);
       return ' ';
     });
-    text = text.replace(/\b(and|or)\b/gi, ' ');
+    text = text.replace(/\b(AND|OR)\b/g, ' ');
   }
 
   if (dialect === 'esql') {
