@@ -1,7 +1,0 @@
-{"@timestamp":"2026-05-01T10:00:00Z","host.name":"host-01","user.name":"analyst1","source.ip":"10.0.0.10","destination.ip":"185.244.25.12","domain":"suspicious.example.com","event.action":"suspicious_action","process.name":"script.exe","process.command_line":"script.exe --encoded"}
-{"@timestamp":"2026-05-01T11:00:00Z","host.name":"wkstn-22","user.name":"j.smith","source.ip":"10.50.1.22","event.action":"email_attachment_opened","process.name":"winword.exe"}
-{"@timestamp":"2026-05-01T11:03:00Z","host.name":"wkstn-22","user.name":"j.smith","event.action":"powershell_spawned","process.name":"powershell.exe","process.command_line":"powershell -enc SQBtAHAA"}
-{"@timestamp":"2026-05-01T11:11:00Z","host.name":"srv-fs-01","user.name":"j.smith","event.action":"psexec_remote_exec","destination.ip":"10.50.9.10"}
-{"@timestamp":"2026-05-01T14:00:00Z","host.name":"baseline-host-01","user.name":"ops.user","source.ip":"10.10.10.10","destination.ip":"10.10.10.20","domain":"internal.local","event.action":"normal_operation"}
-{"@timestamp":"2026-05-01T14:03:00Z","host.name":"baseline-host-01","user.name":"ops.user","source.ip":"10.10.10.10","destination.ip":"10.10.10.21","event.action":"normal_read"}
-{"@timestamp":"2026-05-01T14:07:00Z","host.name":"susp-host-09","user.name":"unknown.user","source.ip":"10.10.10.50","destination.ip":"185.244.25.12","domain":"suspicious.example.com","event.action":"suspicious_action"}

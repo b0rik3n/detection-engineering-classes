@@ -1,7 +1,0 @@
-{"@timestamp":"2026-05-01T10:00:00Z","host.name":"host-01","user.name":"analyst1","source.ip":"10.0.0.10","destination.ip":"185.244.25.12","domain":"suspicious.example.com","event.action":"suspicious_action","process.name":"script.exe","process.command_line":"script.exe --encoded"}
-{"@timestamp":"2026-05-01T07:30:00Z","host.name":"m365-tenant","user.name":"finance.user","source.ip":"198.51.100.88","event.action":"oauth_consent_granted","app.name":"Productivity Sync"}
-{"@timestamp":"2026-05-01T07:34:00Z","host.name":"m365-tenant","user.name":"finance.user","event.action":"mailbox_rule_created","rule.name":"Forward All"}
-{"@timestamp":"2026-05-01T07:36:00Z","host.name":"m365-tenant","user.name":"finance.user","destination.ip":"185.244.25.12","event.action":"graph_api_bulk_read"}
-{"@timestamp":"2026-05-01T14:00:00Z","host.name":"baseline-host-01","user.name":"ops.user","source.ip":"10.10.10.10","destination.ip":"10.10.10.20","domain":"internal.local","event.action":"normal_operation"}
-{"@timestamp":"2026-05-01T14:03:00Z","host.name":"baseline-host-01","user.name":"ops.user","source.ip":"10.10.10.10","destination.ip":"10.10.10.21","event.action":"normal_read"}
-{"@timestamp":"2026-05-01T14:07:00Z","host.name":"susp-host-09","user.name":"unknown.user","source.ip":"10.10.10.50","destination.ip":"185.244.25.12","domain":"suspicious.example.com","event.action":"suspicious_action"}
