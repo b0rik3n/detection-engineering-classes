@@ -9,6 +9,23 @@ Central repo for detection engineering classes.
 - `labs/iran-cyber-risk-escalation-20260430-2055`
 - `labs/notepad-plus-plus-supply-chain-20260430-2101`
 
+## Minimum requirements
+
+For the default Mucaro Scout lab stack:
+
+- OS: Ubuntu 22.04/24.04, Debian 12, RHEL 9, Rocky/Alma 9, CentOS Stream 9, or Fedora
+- CPU: 2 cores minimum, 4 cores recommended
+- RAM: 6GB minimum, 8GB recommended
+- Disk: 25GB free minimum, 40GB recommended
+- Network: internet access for Docker image pulls and GitHub clone
+- Permissions: sudo-capable user
+
+Notes:
+
+- Scout itself is lightweight, but OpenSearch Dashboards is heavier.
+- Optional Splunk requires more resources: 8GB RAM minimum, 12GB+ recommended.
+- The installer checks CPU/RAM/disk and warns if the host is under minimum.
+
 ## Quick install: Mucaro Scout
 
 For Ubuntu/Debian or RHEL-family systems:
@@ -37,6 +54,7 @@ Optional overrides:
 PRELOAD_LABS=false bash scripts/install-mucaro-scout.sh
 START_SPLUNK=true bash scripts/install-mucaro-scout.sh
 INSTALL_DIR=$HOME/detection-engineering-classes bash scripts/install-mucaro-scout.sh
+MIN_MEM_GB=4 MIN_DISK_GB=15 bash scripts/install-mucaro-scout.sh
 ```
 
 ## Mucaro Scout preload only

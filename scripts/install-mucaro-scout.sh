@@ -6,6 +6,9 @@ INSTALL_DIR="${INSTALL_DIR:-$HOME/detection-engineering-classes}"
 BRANCH="${BRANCH:-main}"
 PRELOAD_LABS="${PRELOAD_LABS:-true}"
 START_SPLUNK="${START_SPLUNK:-false}"
+MIN_MEM_GB="${MIN_MEM_GB:-6}"
+MIN_DISK_GB="${MIN_DISK_GB:-25}"
+MIN_CPU_CORES="${MIN_CPU_CORES:-2}"
 
 log() { printf '\n[+] %s\n' "$*"; }
 warn() { printf '\n[!] %s\n' "$*" >&2; }
@@ -26,6 +29,38 @@ fi
 source /etc/os-release
 OS_ID="${ID,,}"
 OS_LIKE="${ID_LIKE,,}"
+
+check_minimum_requirements() {
+  log "Checking minimum requirements"
+
+  local mem_kb mem_gb disk_kb disk_gb cpu_cores
+  mem_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+  mem_gb=$((mem_kb / 1024 / 1024))
+  disk_kb=$(df -Pk "$HOME" | awk 'NR==2 {print $4}')
+  disk_gb=$((disk_kb / 1024 / 1024))
+  cpu_cores=$(getconf _NPROCESSORS_ONLN 2>/dev/null || nproc)
+
+  echo "Detected: ${cpu_cores} CPU cores, ${mem_gb}GB RAM, ${disk_gb}GB free under $HOME"
+  echo "Minimum: ${MIN_CPU_CORES} CPU cores, ${MIN_MEM_GB}GB RAM, ${MIN_DISK_GB}GB free disk"
+
+  local failed=false
+  if (( cpu_cores < MIN_CPU_CORES )); then
+    warn "CPU cores below minimum. Mucaro Scout may run slowly."
+    failed=true
+  fi
+  if (( mem_gb < MIN_MEM_GB )); then
+    warn "RAM below minimum. OpenSearch Dashboards may be unstable."
+    failed=true
+  fi
+  if (( disk_gb < MIN_DISK_GB )); then
+    warn "Free disk below minimum. Docker image pulls may fail."
+    failed=true
+  fi
+
+  if [[ "${failed}" == "true" ]]; then
+    warn "Continuing anyway. Set MIN_MEM_GB/MIN_DISK_GB/MIN_CPU_CORES lower if this is intentional."
+  fi
+}
 
 install_base_packages_debian() {
   log "Installing base packages with apt"
@@ -163,6 +198,7 @@ start_splunk_optional() {
 
 main() {
   log "Mucaro Scout installer"
+  check_minimum_requirements
   install_docker
   clone_or_update_repo
   start_scout
