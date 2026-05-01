@@ -133,7 +133,7 @@ def category_for(source: str) -> str:
 
 def action_for(source: str, suspicious: bool, cfg: dict) -> str:
     table = {
-        "dns": "dns_query", "proxy": "http_request", "firewall": "allowed" if suspicious else "allowed",
+        "dns": "dns_query", "proxy": "http_request", "firewall": "port_scan" if suspicious and cfg.get("indicator") == "vpn-session-check.com" else ("allowed" if suspicious else "allowed"),
         "package": "postinstall" if suspicious else "install", "endpoint": "process_start",
         "edr": "process_start", "auth": "failed_login" if suspicious else "login_success",
         "signin": "risky_signin" if suspicious else "signin_success", "iam": "AttachUserPolicy" if suspicious else "ListRoles",
