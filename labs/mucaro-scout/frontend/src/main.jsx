@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 
@@ -130,6 +130,10 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    search();
+  }, []);
+
   return (
     <main className="shell">
       <header className="app-header">
@@ -248,7 +252,7 @@ function App() {
         <section className="results">
           <div className="results-header">
             <h2>Events</h2>
-            <span>{total.toLocaleString()} matches</span>
+            <span>Showing {results.length.toLocaleString()} of {total.toLocaleString()} matches</span>
           </div>
           <div className="table-wrap">
             <table>
