@@ -1,0 +1,12 @@
+FROM logs-*
+| WHERE threat.actor IN ("CL-STA-1128", "Cyber Av3ngers", "Storm-0784") OR ot.product IN ("FactoryTalk", "Allen-Bradley", "Rockwell Automation")
+| KEEP @timestamp, event.dataset, host.name, user.name, event_type, threat.actor, ot.product, service.name, destination.port, severity, message
+| SORT @timestamp ASC
+
+FROM logs-*
+| WHERE domain IN ("iranforward.org", "trumpvsirancoin.xyz", "emiratescryptobank.com", "emiratesinvestunion.com")
+| KEEP @timestamp, event.dataset, host.name, user.name, domain, url.full, phishing.theme, severity, message
+
+FROM logs-*
+| WHERE event_type IN ("ddos_spike", "wiper_execution", "vsat_starlink_egress")
+| KEEP @timestamp, event.dataset, host.name, event_type, source.ip, destination.ip, requests.per_second, malware.family, network.provider, severity, message

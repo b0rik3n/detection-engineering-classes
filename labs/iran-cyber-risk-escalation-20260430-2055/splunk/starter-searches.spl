@@ -1,0 +1,8 @@
+index=* ("CL-STA-1128" OR "Cyber Av3ngers" OR "Storm-0784" OR "FactoryTalk" OR "Allen-Bradley")
+| table _time event.dataset host.name user.name event_type threat.actor ot.product service.name destination.port severity message
+
+index=* (domain=iranforward.org OR domain=trumpvsirancoin.xyz OR domain=emiratescryptobank.com OR domain=emiratesinvestunion.com)
+| table _time event.dataset host.name user.name domain url.full phishing.theme severity message
+
+index=* (event_type=ddos_spike OR event_type=wiper_execution OR network.provider="Starlink/VSAT")
+| table _time event.dataset host.name event_type source.ip destination.ip requests.per_second malware.family severity message
