@@ -4,21 +4,8 @@ Central repo for detection engineering classes.
 
 ## Labs (in this repo)
 
-- `labs/npm-supply-chain`
-- `labs/ot-ics-scada`
-- `labs/cloud-iam-abuse`
-- `labs/ransomware-initial-access-lateral-movement`
-- `labs/exchange-email-server-exploitation`
-- `labs/browser-extension-supply-chain-risk`
-- `labs/m365-oauth-app-abuse`
-- `labs/kubernetes-runtime-threats`
-- `labs/vpn-edge-device-exploitation`
-- `labs/ot-ics-protocol-misuse-advanced`
-
 - `labs/mucaro-scout`
-
 - `labs/unc1069-crypto-ai-social-engineering-20260430-2046`
-
 - `labs/iran-cyber-risk-escalation-20260430-2055`
 
 ## Admin docs
