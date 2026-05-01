@@ -5,7 +5,7 @@ import './styles.css';
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 const DIALECT_HINTS = {
-  kql: 'source_ip: "10.0.0.5" and severity: high',
+  kql: 'domain: *coin* or process.name: *.exe',
   esql: 'FROM logs | WHERE severity == "high" | LIMIT 100',
 };
 

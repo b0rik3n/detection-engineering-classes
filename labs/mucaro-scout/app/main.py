@@ -169,6 +169,26 @@ def extract_domain(event: dict[str, Any]) -> str:
     return ""
 
 
+def sqlite_like_pattern(value: str, wrap: bool = False) -> str:
+    """Convert Scout wildcards to a SQLite LIKE pattern.
+
+    Users can search with shell/KQL-style wildcards:
+    - * matches any number of characters
+    - ? matches one character
+
+    Literal SQLite wildcard characters are escaped first so user input does not
+    accidentally become broader than intended.
+    """
+    escaped = (
+        value.replace("\\", "\\\\")
+        .replace("%", "\\%")
+        .replace("_", "\\_")
+        .replace("*", "%")
+        .replace("?", "_")
+    )
+    return f"%{escaped}%" if wrap and "%" not in escaped and "_" not in escaped else escaped
+
+
 def normalize_event(event: dict[str, Any]) -> dict[str, Any]:
     now = datetime.now(timezone.utc).isoformat()
     ts = first_value(event, "@timestamp", "timestamp", "time", "event_time", default=now)
@@ -365,9 +385,9 @@ def search_logs(req: SearchRequest) -> dict[str, Any]:
     params: list[Any] = []
 
     if req.query:
-        like = f"%{req.query}%"
+        like = sqlite_like_pattern(req.query, wrap=True)
         where.append(
-            "(raw_message LIKE ? OR raw_json LIKE ? OR event_type LIKE ? OR host LIKE ? OR user LIKE ? OR domain LIKE ? OR severity LIKE ?)"
+            "(raw_message LIKE ? ESCAPE '\\' OR raw_json LIKE ? ESCAPE '\\' OR event_type LIKE ? ESCAPE '\\' OR host LIKE ? ESCAPE '\\' OR user LIKE ? ESCAPE '\\' OR domain LIKE ? ESCAPE '\\' OR severity LIKE ? ESCAPE '\\')"
         )
         params.extend([like, like, like, like, like, like, like])
 
@@ -392,8 +412,12 @@ def search_logs(req: SearchRequest) -> dict[str, Any]:
     for key, value in req.filters.items():
         column = field_map.get(key)
         if column:
-            where.append(f"{column} = ?")
-            params.append(value)
+            if "*" in value or "?" in value:
+                where.append(f"{column} LIKE ? ESCAPE '\\'")
+                params.append(sqlite_like_pattern(value))
+            else:
+                where.append(f"{column} = ?")
+                params.append(value)
 
     if req.start_time:
         where.append("timestamp >= ?")
