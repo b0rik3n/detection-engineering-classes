@@ -15,6 +15,8 @@ Central repo for detection engineering classes.
 - `labs/vpn-edge-device-exploitation`
 - `labs/ot-ics-protocol-misuse-advanced`
 
+- `labs/mucaro-scout`
+
 ## Admin docs
 - `ADMIN_BACKEND_SETUP_GUIDE.md`
 

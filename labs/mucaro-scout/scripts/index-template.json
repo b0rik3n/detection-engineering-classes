@@ -1,0 +1,24 @@
+{
+  "index_patterns": ["logs-normalized*"],
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0,
+      "refresh_interval": "5s"
+    },
+    "mappings": {
+      "dynamic": true,
+      "properties": {
+        "@timestamp": { "type": "date" },
+        "source_ip": { "type": "ip", "ignore_malformed": true },
+        "destination_ip": { "type": "ip", "ignore_malformed": true },
+        "user": { "type": "keyword" },
+        "host": { "type": "keyword" },
+        "event_type": { "type": "keyword" },
+        "severity": { "type": "keyword" },
+        "raw_message": { "type": "text" },
+        "original": { "type": "object", "enabled": false }
+      }
+    }
+  }
+}
