@@ -72,6 +72,9 @@ function App() {
   const [viewMode, setViewMode] = useState('scout');
   const [results, setResults] = useState([]);
   const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const pageSize = 100;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const [error, setError] = useState('');
 
   async function uploadFile(event) {
@@ -107,8 +110,7 @@ function App() {
     }
   }
 
-  async function search(event) {
-    event?.preventDefault();
+  async function runSearch(targetPage = 1) {
     setLoading(true);
     setError('');
     const parsed = parseQueryByDialect(query, queryDialect);
@@ -117,12 +119,13 @@ function App() {
       const res = await fetch(`${API_URL}/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: parsed.query, ...bounds, filters: parsed.filters, page: 1, size: 100 }),
+        body: JSON.stringify({ query: parsed.query, ...bounds, filters: parsed.filters, page: targetPage, size: pageSize }),
       });
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
       setResults(data.results || []);
       setTotal(data.total || 0);
+      setPage(data.page || targetPage);
     } catch (err) {
       setError(`Search failed: ${err.message}`);
     } finally {
@@ -130,8 +133,21 @@ function App() {
     }
   }
 
+  async function search(event) {
+    event?.preventDefault();
+    runSearch(1);
+  }
+
+  function previousPage() {
+    if (page > 1) runSearch(page - 1);
+  }
+
+  function nextPage() {
+    if (page < totalPages) runSearch(page + 1);
+  }
+
   useEffect(() => {
-    search();
+    runSearch(1);
   }, []);
 
   return (
@@ -252,7 +268,11 @@ function App() {
         <section className="results">
           <div className="results-header">
             <h2>Events</h2>
-            <span>Showing {results.length.toLocaleString()} of {total.toLocaleString()} matches</span>
+            <div className="pagination">
+              <span>Showing {results.length.toLocaleString()} of {total.toLocaleString()} matches · Page {page.toLocaleString()} of {totalPages.toLocaleString()}</span>
+              <button type="button" onClick={previousPage} disabled={loading || page <= 1}>Previous</button>
+              <button type="button" onClick={nextPage} disabled={loading || page >= totalPages}>Next</button>
+            </div>
           </div>
           <div className="table-wrap">
             <table>
