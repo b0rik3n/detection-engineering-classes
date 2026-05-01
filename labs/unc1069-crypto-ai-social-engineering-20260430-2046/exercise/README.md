@@ -1,5 +1,9 @@
 # Student exercise
 
+For a full click-by-click walkthrough, use:
+
+- [`STUDENT_CLICK_BY_CLICK_GUIDE.md`](./STUDENT_CLICK_BY_CLICK_GUIDE.md)
+
 ## Task 1: Identify the lure
 Search for Telegram/social events that point users to fake meeting infrastructure.
 
