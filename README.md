@@ -8,6 +8,8 @@ Central repo for detection engineering classes.
 - `labs/unc1069-crypto-ai-social-engineering-20260430-2046`
 - `labs/iran-cyber-risk-escalation-20260430-2055`
 
+- `labs/notepad-plus-plus-supply-chain-20260430-2101`
+
 ## Admin docs
 - `ADMIN_BACKEND_SETUP_GUIDE.md`
 

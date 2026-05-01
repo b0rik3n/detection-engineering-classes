@@ -1,0 +1,12 @@
+FROM logs-*
+| WHERE process.name == "GUP.exe" OR file.name == "update.exe" OR destination.ip IN ("45.76.155.202", "45.77.31.210", "45.32.144.255")
+| KEEP @timestamp, event.dataset, host.name, user.name, event_type, process.name, url.full, destination.ip, file.name, severity, message
+| SORT @timestamp ASC
+
+FROM logs-*
+| WHERE actor_process_signature_vendor == "Bitdefender SRL" AND action_module_path LIKE "*log.dll*" AND actor_process_image_path NOT LIKE "*Program Files*Bitdefender*"
+| KEEP @timestamp, host.name, actor_process_image_name, actor_process_image_path, action_module_path, malware.family, severity
+
+FROM logs-*
+| WHERE mutex.name == "Global\Jdhfv_1.0.1" OR malware.family IN ("Chrysalis", "Cobalt Strike Beacon")
+| KEEP @timestamp, event.dataset, host.name, user.name, event_type, process.name, malware.family, mutex.name, severity, message

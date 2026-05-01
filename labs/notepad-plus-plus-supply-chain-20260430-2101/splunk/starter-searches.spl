@@ -1,0 +1,8 @@
+index=* ("GUP.exe" OR "WinGUp" OR "update.exe" OR "45.76.155.202" OR "45.77.31.210" OR "45.32.144.255")
+| table _time event.dataset host.name user.name event_type process.name url.full destination.ip file.name severity message
+
+index=* actor_process_signature_vendor="Bitdefender SRL" action_module_path="*log.dll*" actor_process_image_path!="*Program Files*Bitdefender*"
+| table _time host.name actor_process_image_name actor_process_image_path action_module_path malware.family severity
+
+index=* (mutex.name="Global\Jdhfv_1.0.1" OR malware.family="Chrysalis" OR malware.family="Cobalt Strike Beacon")
+| table _time event.dataset host.name user.name event_type process.name malware.family mutex.name severity message
