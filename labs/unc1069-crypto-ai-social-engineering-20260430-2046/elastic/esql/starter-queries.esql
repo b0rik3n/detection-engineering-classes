@@ -1,0 +1,12 @@
+FROM logs-*
+| WHERE domain IN ("zoom.uswe05.us", "mylingocoin.com") OR url.full == "http://mylingocoin.com/audio/fix/6454694440"
+| KEEP @timestamp, event.dataset, host.name, user.name, event_type, domain, url.full, severity, message
+| SORT @timestamp ASC
+
+FROM logs-*
+| WHERE event_type == "clickfix_command_execution"
+| STATS commands = VALUES(process.command_line), urls = VALUES(url.full) BY host.name, user.name
+
+FROM logs-*
+| WHERE malware.family IN ("WAVESHAPER", "SUGARLOADER", "HYPERCALL", "HIDDENCALL", "SILENCELIFT", "DEEPBREATH", "CHROMEPUSH")
+| STATS malware = VALUES(malware.family), targets = VALUES(credential.target) BY host.name, user.name

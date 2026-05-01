@@ -1,0 +1,8 @@
+index=* (domain=zoom.uswe05.us OR domain=mylingocoin.com OR url.full="http://mylingocoin.com/audio/fix/6454694440")
+| table _time event.dataset host.name user.name event_type domain url.full severity message
+
+index=* event_type=clickfix_command_execution
+| stats values(process.command_line) as commands values(url.full) as urls by host.name user.name
+
+index=* malware.family IN (WAVESHAPER,SUGARLOADER,HYPERCALL,HIDDENCALL,SILENCELIFT,DEEPBREATH,CHROMEPUSH)
+| stats values(malware.family) as malware values(credential.target) as targets by host.name user.name
