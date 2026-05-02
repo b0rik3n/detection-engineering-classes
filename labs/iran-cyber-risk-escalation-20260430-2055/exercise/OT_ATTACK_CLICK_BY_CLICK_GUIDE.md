@@ -10,82 +10,43 @@ Primary source article:
 
 ## Why this guide exists
 
-The main exercise covers phishing, DNS, firewall, DDoS, and wiper activity. This optional add-on zooms in on one specific area: **OT targeting behavior**.
+The main exercise covers phishing, DNS, firewall, DDoS, and wiper activity. This guide zooms in on one specific area: **OT targeting behavior**.
 
-This add-on is intentionally beginner-friendly. You are not expected to be an OT engineer. The goal is to build confidence in OT-focused detection thinking using simple, repeatable steps.
-
-What you will do:
-
-1. Identify suspicious OT-relevant events.
-2. Separate likely reconnaissance from normal inventory noise.
-3. Build a small, defensible timeline.
-4. Write practical detections in SPL.
+This guide is beginner-friendly. You are not expected to be an OT engineer. The goal is to build confidence in OT-focused detection thinking with clear, repeatable SPL workflows.
 
 ---
 
-## OT 101 mini-primer (for students new to OT)
+## OT 101 mini-primer
 
-### What is OT in this context?
+- **HMI**: operator interface.
+- **Engineering Workstation**: config/programming host.
+- **PLC network**: controllers that run physical processes.
 
-Operational Technology (OT) includes systems that monitor/control physical processes, such as industrial controllers and plant-floor devices.
+Why OT is different: scanning that is normal in IT can be disruptive in OT.
 
-In this lab, think of these core components:
-
-- **HMI (Human Machine Interface)**: operator screen and control console.
-- **Engineering Workstation**: used to configure logic, projects, and updates.
-- **PLC network**: controllers that manage physical equipment.
-
-### Why OT traffic is treated differently than IT traffic
-
-In many enterprise IT environments, scanning is common and often expected. In OT, scanning can be risky because:
-
-- some legacy devices are fragile,
-- unusual traffic can interrupt operations,
-- even “read-only” probing may indicate pre-attack reconnaissance.
-
-### Ports to care about in this add-on
-
-- **44818**: commonly associated with EtherNet/IP and Allen-Bradley environments.
-- **502**: commonly associated with Modbus/TCP.
-
-You are not proving an exploit happened. You are detecting behavior that suggests reconnaissance and potential preparation.
+Ports in this lab:
+- **44818** (common in EtherNet/IP and Allen-Bradley contexts)
+- **502** (Modbus/TCP)
 
 ---
 
-## Learning goal (keep it simple)
-
-By the end, answer these four questions:
-
-1. Which events in this lab suggest OT scanning/probing activity?
-2. Which source IPs and destinations are most suspicious?
-3. Which services/ports were touched (for example 44818 and 502)?
-4. What 4 detections can catch this earlier next time?
-
----
-
-## Data used in this add-on
-
-Use this file:
+## Data used in this guide
 
 ```text
 labs/iran-cyber-risk-escalation-20260430-2055/data/ot-ics.jsonl
 ```
 
-Useful terms in this dataset:
-
+Useful terms:
 - `factorytalk_scan`
 - `allen_bradley_plc_probe`
 - `asset_inventory`
 - `FactoryTalk`
 - `Allen-Bradley`
 - `Rockwell Automation`
-- `CL-STA-1128`
-- `Cyber Av3ngers`
-- `Storm-0784`
 
 ---
 
-## OT network diagram (simple reference)
+## OT network diagram
 
 ```mermaid
 flowchart LR
@@ -101,57 +62,32 @@ flowchart LR
     AttackerIP -.FactoryTalk scan.-> HMI
 ```
 
-How to use this diagram:
-
-- External-to-PLC or external-to-HMI probing is high risk.
-- IT-to-PLC traffic is suspicious unless explicitly approved.
-- OT-relevant destination ports plus unknown external source should raise priority.
-
 ---
 
-## Part 1: Quick triage mindset
+## Part 1: Step-by-step in Splunk with query explanations
 
-Use this logic throughout the exercise:
-
-- `asset_inventory` can be normal depending on environment.
-- `factorytalk_scan` and `allen_bradley_plc_probe` are higher signal.
-- repeated events from same source are more suspicious than one-off noise.
-- external source IPs to OT ports deserve immediate review.
-
----
-
-## Part 2: Step-by-step in Splunk
-
-### Step 1: Load OT dataset (if not already loaded)
-
-1. Open Splunk Web.
-2. Go to **Settings** → **Add Data**.
-3. Click **Upload**.
-4. Select:
-
-```text
-labs/iran-cyber-risk-escalation-20260430-2055/data/ot-ics.jsonl
-```
-
-5. Choose `_json` sourcetype.
-6. Send to your class index (example: `de_iran_lab`).
-7. Open **Search & Reporting**.
-8. Set time to **All time**.
-
-### Step 2: Confirm ingestion count
+### Step 1: Confirm OT data is ingested
 
 ```spl
 index=de_iran_lab event.dataset="ot-ics"
 | stats count
 ```
 
-Expected: around 100 events.
+**What this query does**
+- Counts OT events in your Splunk index.
 
-**How to interpret:**
-- If count is close to 100, ingest worked.
-- If count is 0, index/time range/sourcetype are likely wrong.
+**Query breakdown**
+- `index=de_iran_lab`: search only your class index.
+- `event.dataset="ot-ics"`: keep only OT dataset events.
+- `| stats count`: return one total count.
 
-### Step 3: See event-type distribution
+**How to read the result**
+- Near 100 means ingestion worked.
+- 0 usually means wrong index, time range, or sourcetype.
+
+---
+
+### Step 2: Understand event-type mix
 
 ```spl
 index=de_iran_lab event.dataset="ot-ics"
@@ -159,12 +95,20 @@ index=de_iran_lab event.dataset="ot-ics"
 | sort - count
 ```
 
-**How to interpret:**
-- You should see many `asset_inventory` events.
-- You should also see smaller buckets of `factorytalk_scan` and `allen_bradley_plc_probe`.
-- Small but high-severity buckets are often where detection value lives.
+**What this query does**
+- Shows how many events exist for each OT event type.
 
-### Step 4: Isolate likely malicious OT activity
+**Query breakdown**
+- `stats count by event_type`: group rows by `event_type` and count each group.
+- `sort - count`: highest counts first.
+
+**How to read the result**
+- `asset_inventory` is usually larger and can be benign.
+- `factorytalk_scan` and `allen_bradley_plc_probe` are higher signal.
+
+---
+
+### Step 3: Pull likely suspicious OT events
 
 ```spl
 index=de_iran_lab event.dataset="ot-ics" (event_type="factorytalk_scan" OR event_type="allen_bradley_plc_probe")
@@ -172,12 +116,21 @@ index=de_iran_lab event.dataset="ot-ics" (event_type="factorytalk_scan" OR event
 | sort _time
 ```
 
-**How to interpret:**
-- Treat this result set as your “investigation core.”
-- Look for repeated source IPs, repeated destination ranges, and critical severity.
-- Note whether `threat.actor` tags are present.
+**What this query does**
+- Isolates scan/probe events and shows analyst-friendly fields.
 
-### Step 5: Find top suspicious source IPs
+**Query breakdown**
+- `(A OR B)`: include either scan type.
+- `table ...`: keep only fields you care about.
+- `sort _time`: show event flow in time order.
+
+**How to read the result**
+- Repeated source IPs and OT ports are priority.
+- Critical severity + external source is stronger signal.
+
+---
+
+### Step 4: Identify top suspicious source IPs
 
 ```spl
 index=de_iran_lab event.dataset="ot-ics" (event_type="factorytalk_scan" OR event_type="allen_bradley_plc_probe")
@@ -185,12 +138,20 @@ index=de_iran_lab event.dataset="ot-ics" (event_type="factorytalk_scan" OR event
 | sort - count
 ```
 
-**How to interpret:**
-- Prioritize source IPs with highest counts.
-- Prioritize sources touching multiple OT targets/ports.
-- If one source triggers both scan/probe types, elevate severity.
+**What this query does**
+- Ranks source IPs by how much suspicious OT activity they generated.
 
-### Step 6: Check targeted OT services and ports
+**Query breakdown**
+- `stats count ... by source.ip threat.actor`: one row per source/threat-actor combo.
+- `values(...)`: shows unique event types, targets, and ports touched.
+
+**How to read the result**
+- Highest count sources go to top of triage queue.
+- Sources hitting many targets/ports are more concerning.
+
+---
+
+### Step 5: See what OT ports/services are targeted
 
 ```spl
 index=de_iran_lab event.dataset="ot-ics" (event_type="factorytalk_scan" OR event_type="allen_bradley_plc_probe")
@@ -198,12 +159,19 @@ index=de_iran_lab event.dataset="ot-ics" (event_type="factorytalk_scan" OR event
 | sort - count
 ```
 
-**How to interpret:**
-- Activity on 44818 and 502 supports OT reconnaissance hypothesis.
-- Unknown or generic service labels with OT ports can still be suspicious.
-- High volume toward one port can indicate targeted protocol probing.
+**What this query does**
+- Summarizes which destination ports/services were targeted most.
 
-### Step 7: Build a compact OT incident timeline
+**Query breakdown**
+- `count by destination.port service.name`: pair each port with service label.
+
+**How to read the result**
+- Port 44818 or 502 activity supports OT reconnaissance hypothesis.
+- High counts on one OT-relevant port can indicate focused probing.
+
+---
+
+### Step 6: Build OT timeline
 
 ```spl
 index=de_iran_lab event.dataset="ot-ics" (event_type="factorytalk_scan" OR event_type="allen_bradley_plc_probe" OR event_type="asset_inventory")
@@ -211,50 +179,64 @@ index=de_iran_lab event.dataset="ot-ics" (event_type="factorytalk_scan" OR event
 | sort _time
 ```
 
-**How to interpret:**
-- Find earliest suspicious event.
-- Map whether suspicious scan/probe events appear in clusters.
-- Note if benign-like inventory events happen before/after suspicious events from same source.
+**What this query does**
+- Produces a simple timeline across suspicious and baseline-like OT events.
+
+**Query breakdown**
+- Includes `asset_inventory` to compare noise vs suspicious activity.
+- `table` keeps timeline fields concise.
+
+**How to read the result**
+- Identify first suspicious event.
+- Check if scans/probes cluster in short windows.
+- Note if same source appears across multiple event types.
 
 ---
 
-## Worked mini-example (what a good timeline looks like)
-
-Use this as a model for your own output.
+## Worked mini-example
 
 ```text
-09:09:51Z | factorytalk_scan           | 91.219.236.42  -> 10.77.4.16:8080 | first suspicious scan
-09:10:10Z | factorytalk_scan           | 193.32.162.77 -> 10.77.4.17:44818 | OT protocol-relevant target
-09:22:58Z | allen_bradley_plc_probe    | 91.219.236.42 -> 10.77.4.29:502   | probing broadens to PLC/Modbus
-09:23:17Z | allen_bradley_plc_probe    | 193.32.162.77 -> 10.77.4.30:8080  | repeated external probing behavior
+09:09:51Z | factorytalk_scan        | 91.219.236.42  -> 10.77.4.16:8080
+09:10:10Z | factorytalk_scan        | 193.32.162.77 -> 10.77.4.17:44818
+09:22:58Z | allen_bradley_plc_probe | 91.219.236.42 -> 10.77.4.29:502
+09:23:17Z | allen_bradley_plc_probe | 193.32.162.77 -> 10.77.4.30:8080
 ```
-
-Why this matters:
-- multiple external sources,
-- repeated OT-specific behavior,
-- progression from scanning to direct PLC-related probing.
 
 ---
 
-## Part 3: Write 4 simple OT detections
+## Part 2: OT detections with descriptions
 
-### Detection A: FactoryTalk scanning activity
+### Detection A: FactoryTalk scan detection
 
 ```spl
 index=de_iran_lab event.dataset="ot-ics" event_type="factorytalk_scan"
 | stats count values(source.ip) as src values(destination.ip) as dst values(destination.port) as ports by threat.actor
 ```
 
-Use when: you want a focused analytic for FactoryTalk-style reconnaissance.
+**Purpose**
+- Detect FactoryTalk-oriented scan behavior.
 
-### Detection B: Allen-Bradley PLC probing
+**How it works**
+- Filters only `factorytalk_scan` events.
+- Aggregates source/destination/ports by `threat.actor`.
+
+---
+
+### Detection B: Allen-Bradley PLC probe detection
 
 ```spl
 index=de_iran_lab event.dataset="ot-ics" event_type="allen_bradley_plc_probe"
 | stats count values(source.ip) as src values(destination.ip) as dst values(service.name) as services by threat.actor
 ```
 
-Use when: you want direct visibility into PLC probe behavior.
+**Purpose**
+- Detect direct PLC probing behavior.
+
+**How it works**
+- Filters only `allen_bradley_plc_probe` events.
+- Summarizes which sources targeted which destinations/services.
+
+---
 
 ### Detection C: External source to OT-critical ports
 
@@ -266,9 +248,17 @@ index=de_iran_lab event.dataset="ot-ics" destination.port IN (44818,502)
 | sort - count
 ```
 
-Use when: you want a high-priority signal for external-to-OT communication attempts.
+**Purpose**
+- High-priority detection for external-to-OT port communication.
 
-### Detection D: Burst of OT probe events by one source
+**How it works**
+- Keeps OT-critical ports only.
+- Marks RFC1918 ranges as internal and others as external.
+- Keeps only external source events.
+
+---
+
+### Detection D: Burst probing detection
 
 ```spl
 index=de_iran_lab event.dataset="ot-ics" (event_type="factorytalk_scan" OR event_type="allen_bradley_plc_probe")
@@ -278,81 +268,37 @@ index=de_iran_lab event.dataset="ot-ics" (event_type="factorytalk_scan" OR event
 | sort _time
 ```
 
-Use when: you want to catch short-window burst behavior associated with active reconnaissance.
+**Purpose**
+- Catch short-window probe bursts.
+
+**How it works**
+- Groups time into 10-minute buckets.
+- Counts events per source per bucket.
+- Flags buckets with count >= 3.
 
 ---
 
-## Part 4: False-positive handling (beginner-friendly)
+## Part 3: False positives and tuning
 
-Potential false positives:
+Common false positives:
+- legitimate OT discovery tools,
+- maintenance scans,
+- approved jump-host checks.
 
-- legitimate OT asset discovery tools,
-- planned maintenance scans,
-- approved engineering scans from known jump hosts.
-
-Practical tuning examples:
-
-1. Allowlist known scanner IPs, for example an approved jump host list.
-2. Suppress alerts during approved maintenance window tags.
-3. Raise severity only when source is external OR source not in approved OT scanner list.
-4. Raise severity when same source triggers both `factorytalk_scan` and `allen_bradley_plc_probe` within 30 minutes.
-5. Raise severity when destination port is 44818 or 502 and source is new/unknown.
+Simple tuning:
+1. Allowlist known scanner IPs.
+2. Lower priority during approved maintenance windows.
+3. Raise severity when source is external and unknown.
+4. Raise severity when both scan types occur from same source in 30 minutes.
 
 ---
 
-## Part 5: Tiny incident-response playbook for this add-on
+## Part 4: Submission checklist
 
-If one of these detections fires in production:
-
-1. Validate source IP ownership and geolocation.
-2. Confirm destination systems are true OT/ICS assets.
-3. Check if source is on approved scanner list.
-4. If not approved, contain at perimeter (block/rate-limit).
-5. Review related firewall/IDS logs for same source and time window.
-6. Coordinate with OT operations before disruptive changes.
-
----
-
-## Part 6: Submission format
-
-### A) Findings (5-8 bullets)
-
-Include:
-
-- top suspicious source IPs,
-- targeted OT services/ports,
-- time window of suspicious activity,
-- threat actor tags observed in telemetry.
-
-### B) Timeline (small table)
-
-```text
-Time | Event Type | Source IP | Destination IP | Port | Why suspicious
-```
-
-### C) Detections (4)
-
-For each detection include:
-
-- SPL query,
-- what it catches,
-- one likely false positive,
-- one tuning improvement.
-
-### D) Response recommendations (3-5 bullets)
-
-Focus on realistic SOC + OT actions.
-
----
-
-## Completion checklist
-
-- [ ] confirmed OT dataset ingestion
-- [ ] identified scan/probe event types
-- [ ] identified top suspicious source IPs
-- [ ] mapped key OT ports/services targeted
-- [ ] created a compact OT timeline
-- [ ] wrote 4 OT-focused detections
-- [ ] documented false-positive handling and tuning
-
-If you can explain your findings to another analyst in 5 minutes, you are in great shape.
+- [ ] OT data ingested and validated
+- [ ] event-type distribution explained
+- [ ] suspicious source IPs identified
+- [ ] OT ports/services summarized
+- [ ] timeline created
+- [ ] 4 detections documented with purpose/how-they-work
+- [ ] false-positive tuning included
