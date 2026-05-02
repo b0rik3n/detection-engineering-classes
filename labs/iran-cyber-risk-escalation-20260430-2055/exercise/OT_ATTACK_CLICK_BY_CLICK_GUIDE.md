@@ -1,6 +1,6 @@
-# Optional Add-On: OT Attack Click-by-Click Guide (Splunk-Only)
+# OT Attack Click-by-Click Guide (Splunk-Only)
 
-Lab add-on for: `iran-cyber-risk-escalation-20260430-2055`
+Guide for lab: `iran-cyber-risk-escalation-20260430-2055`
 
 Primary source article:
 - Unit 42 Threat Brief: Escalation of Cyber Risk Related to Iran (Updated April 17)
@@ -8,7 +8,7 @@ Primary source article:
 
 ---
 
-## Why this add-on exists
+## Why this guide exists
 
 The main exercise covers phishing, DNS, firewall, DDoS, and wiper activity. This optional add-on zooms in on one specific area: **OT targeting behavior**.
 
