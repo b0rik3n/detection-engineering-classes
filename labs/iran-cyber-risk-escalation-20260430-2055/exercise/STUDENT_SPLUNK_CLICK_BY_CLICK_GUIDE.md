@@ -437,3 +437,40 @@ Your submission should include:
 - [ ] wiper/destructive findings
 - [ ] full timeline
 - [ ] at least 5 SPL detections with tuning notes
+
+---
+
+## 11) Student challenge (no answer key)
+
+Create these two queries on your own. Do not copy from earlier sections.
+
+### Challenge A (easy)
+Build a query that returns the **top 5 source IPs** interacting with these suspicious domains:
+
+- `iranforward.org`
+- `trumpvsirancoin.xyz`
+- `emiratescryptobank.com`
+- `emiratesinvestunion.com`
+- `emirates-post-payments.com`
+
+Your result must show:
+- source IP
+- total event count
+- distinct domains touched
+
+### Challenge B (advanced)
+Build a query that detects possible **multi-stage behavior in a 30-minute window** where the same `source.ip` is associated with:
+
+1. OT scan/probe activity (`factorytalk_scan` or `allen_bradley_plc_probe`), and
+2. high-risk PAN-OS threat activity (`event.dataset="panw.panos"` with `panw.panos.type="THREAT"` or high/critical severity)
+
+Your result must show:
+- time bucket
+- source IP
+- whether OT condition was met
+- whether PAN-OS threat condition was met
+- supporting event counts
+
+Success criteria:
+- only return rows where **both** conditions are true
+- sort by earliest matching time
