@@ -2,6 +2,10 @@
 
 Lab: `iran-cyber-risk-escalation-20260430-2055`
 
+Source article:
+- Unit 42 Threat Brief: Escalation of Cyber Risk Related to Iran (Updated April 17)
+- https://unit42.paloaltonetworks.com/iranian-cyberattacks-2026/
+
 This guide is Splunk-only and walks you from data load to final detection write-up.
 
 ---
