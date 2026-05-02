@@ -52,6 +52,28 @@ Useful terms in this dataset:
 - `Cyber Av3ngers`
 - `Storm-0784`
 
+## OT network diagram (simple reference)
+
+```mermaid
+flowchart LR
+    Internet[Internet / External Sources] --> FW[Perimeter Firewall]
+    FW --> IT[IT Zone]
+    FW --> DMZ[ICS DMZ / Jump Zone]
+    DMZ --> HMI[SCADA HMI]
+    DMZ --> ENG[Engineering Workstation]
+    HMI --> PLC[Allen-Bradley / PLC Network]
+    ENG --> PLC
+
+    AttackerIP[Suspect Source IPs] -.scan/probe.-> PLC
+    AttackerIP -.FactoryTalk scan.-> HMI
+```
+
+How to use this diagram:
+
+- Treat external-to-PLC or external-to-HMI probing as high risk.
+- Treat IT-to-PLC traffic as suspicious unless explicitly approved.
+- Prioritize events where source IP is external and destination port is OT-relevant.
+
 ---
 
 ## Part 1: Quick triage in plain language
@@ -70,7 +92,7 @@ What we are trying to find quickly:
 
 ---
 
-## Part 2: Step-by-step in Splunk (recommended path)
+## Part 2: Step-by-step in Splunk
 
 ### Step 1: Load OT dataset (if not already loaded)
 
@@ -164,23 +186,7 @@ In your notes, extract:
 
 ---
 
-## Part 3: Optional Mucaro Scout flow (if class uses Scout)
-
-1. Open Scout.
-2. Upload `ot-ics.jsonl`.
-3. Run these searches in order:
-   - `factorytalk_scan`
-   - `allen_bradley_plc_probe`
-   - `FactoryTalk OR Allen-Bradley OR Rockwell Automation`
-   - `CL-STA-1128 OR Cyber Av3ngers OR Storm-0784`
-4. Capture screenshots of top matching rows.
-5. Build a short timeline from timestamps.
-
-Keep this path simple. Splunk remains the primary path for this add-on.
-
----
-
-## Part 4: Write 4 simple OT detections
+## Part 3: Write 4 simple OT detections
 
 Use these as starter detections.
 
@@ -220,7 +226,7 @@ index=de_iran_lab event.dataset="ot-ics" (event_type="factorytalk_scan" OR event
 
 ---
 
-## Part 5: False-positive handling (important)
+## Part 4: False-positive handling (important)
 
 Do not skip this section in your report.
 
@@ -239,7 +245,7 @@ How to tune safely:
 
 ---
 
-## Part 6: Tiny incident-response playbook for this add-on
+## Part 5: Tiny incident-response playbook for this add-on
 
 If this detection fired in a real environment:
 
@@ -253,7 +259,7 @@ Short and practical is fine here.
 
 ---
 
-## Part 7: Submission format for this optional add-on
+## Part 6: Submission format for this optional add-on
 
 Keep it concise.
 
