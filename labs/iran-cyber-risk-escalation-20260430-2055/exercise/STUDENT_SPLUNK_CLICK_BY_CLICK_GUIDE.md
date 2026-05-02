@@ -11,7 +11,7 @@ This guide is Splunk-only and walks you from data load to final detection write-
 1. Open Splunk Web.
 2. Go to **Settings** → **Add Data**.
 3. Click **Upload**.
-4. Upload:
+4. Upload `combined.jsonl` first:
 
 ```text
 labs/iran-cyber-risk-escalation-20260430-2055/data/combined.jsonl
@@ -21,8 +21,14 @@ labs/iran-cyber-risk-escalation-20260430-2055/data/combined.jsonl
 6. Host value: automatic is fine.
 7. Set destination index (recommended): `de_iran_lab`.
 8. Click **Review** → **Submit**.
-9. Open **Search & Reporting**.
-10. Set time picker to **All time**.
+9. Repeat upload for Palo Alto logs to the same index:
+
+```text
+labs/iran-cyber-risk-escalation-20260430-2055/data/paloalto-firewall.jsonl
+```
+
+10. Open **Search & Reporting**.
+11. Set time picker to **All time**.
 
 Quick validation search:
 
@@ -30,7 +36,7 @@ Quick validation search:
 index=de_iran_lab | stats count
 ```
 
-Expected: around 700 events.
+Expected: around 1,020 events (700 combined + 320 Palo Alto).
 
 ---
 
@@ -122,6 +128,14 @@ index=de_iran_lab event.dataset="ddos" (ddos_spike OR http_flood OR udp_flood OR
 ---
 
 ## 6) Firewall + Palo Alto specific hunt
+
+First verify Palo Alto ingestion:
+
+```spl
+index=de_iran_lab event.dataset="panw.panos" | stats count
+```
+
+Expected: 320 events.
 
 ### 6.1 Generic suspicious egress
 

@@ -7,7 +7,7 @@ Files:
 - `dns.jsonl` - 100 DNS events
 - `ot-ics.jsonl` - 100 OT/ICS service and PLC-oriented events
 - `firewall.jsonl` - 100 network control events
-- `paloalto-firewall.jsonl` - 36 realistic Palo Alto PAN-OS firewall events for detection practice
+- `paloalto-firewall.jsonl` - 320 realistic Palo Alto PAN-OS firewall events for detection practice
 - `ddos.jsonl` - 100 DDoS/traffic events
 - `wiper.jsonl` - 100 endpoint destructive activity events
 - `combined.jsonl` - 700 merged events sorted by timestamp
