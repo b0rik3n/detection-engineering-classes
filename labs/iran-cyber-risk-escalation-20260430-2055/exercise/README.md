@@ -1,6 +1,7 @@
 # Student exercise
 
 Detailed walkthrough: `STUDENT_CLICK_BY_CLICK_GUIDE.md`
+Splunk-only walkthrough: `STUDENT_SPLUNK_CLICK_BY_CLICK_GUIDE.md`
 
 ## Task 1: Identify conflict-themed phishing
 Search for suspicious domains including `iranforward.org`, `trumpvsirancoin.xyz`, `emiratescryptobank.com`, and `emiratesinvestunion.com`.
